@@ -1,29 +1,48 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <h1>Touch The Numbers Vue</h1>
+    <p>
+      select size:
+      <span>
+        <input
+          class="size-selector"
+          type="number"
+          v-model="state.fieldSize"
+          min="2"
+          max="8"
+        />
+      </span>
+    </p>
+
+    <GameField :size="Number(state.fieldSize)" />
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import { defineComponent, reactive } from '@vue/composition-api';
+import GameField from '@/components/GameField.vue';
 
-export default Vue.extend({
-  name: "App",
+const App = defineComponent({
   components: {
-    HelloWorld
+    GameField
+  },
+  setup() {
+    const state = reactive({
+      fieldSize: 5
+    });
+
+    return {
+      state
+    };
   }
 });
+
+export default App;
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+.size-selector {
+  font-size: 20px;
+  padding: 0.3em 1em;
 }
 </style>
