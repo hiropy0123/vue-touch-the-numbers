@@ -1,20 +1,46 @@
 <template>
   <div id="field" :class="$style.wrapper" :style="styles">
     <NumberButton
-      v-for="(val, index) in createNumbers(size ** 2)"
+      v-for="(val, index) in state.numbers"
       :key="index"
       :figure="val"
       :size="size"
+      :count="state.count"
+      @countup="countup"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, computed } from '@vue/composition-api';
+import {
+  defineComponent,
+  reactive,
+  computed,
+  onMounted
+} from '@vue/composition-api';
 import NumberButton from '@/components/NumberButton.vue';
 
 type Props = {
   size: number;
+};
+
+type State = {
+  count: number;
+  numbers: number[];
+};
+
+// 連番の配列を生成
+const createSerialNumbers = (length: number): number[] => {
+  return [...Array(length).keys()].map((_, i) => i + 1);
+};
+
+// 配列をシャッフルする
+const shuffle = ([...array]) => {
+  for (let i = array.length - 1; i >= 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 };
 
 const GameField = defineComponent({
@@ -30,8 +56,9 @@ const GameField = defineComponent({
   setup(props: Props) {
     props.size;
 
-    const state = reactive({
-      message: 'hello!'
+    const state: State = reactive({
+      count: 1,
+      numbers: []
     });
 
     const styles = computed(() => {
@@ -40,15 +67,24 @@ const GameField = defineComponent({
       };
     });
 
-    // 連番の配列を生成
-    const createNumbers = (length: number): number[] => {
-      return [...Array(length).keys()].map((_, i) => i + 1);
+    // ランダムな配列を生成
+    const createNumbers = (length: number) => {
+      state.numbers = shuffle(createSerialNumbers(length));
     };
+
+    const countup = (count: number) => {
+      state.count = count + 1;
+    };
+
+    onMounted(() => {
+      createNumbers(props.size ** 2);
+    });
 
     return {
       state,
       styles,
-      createNumbers
+      createNumbers,
+      countup
     };
   }
 });

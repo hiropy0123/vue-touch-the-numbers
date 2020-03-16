@@ -1,5 +1,10 @@
 <template>
-  <div class="number-button" :style="styles">
+  <div
+    class="number-button"
+    :style="styles"
+    :class="{ pushed: state.pushed }"
+    @click="tap"
+  >
     <span>{{ figure }}</span>
   </div>
 </template>
@@ -10,6 +15,7 @@ import { defineComponent, reactive, computed } from '@vue/composition-api';
 type Props = {
   figure: number;
   size: number;
+  count: number;
 };
 
 const NumberButton = defineComponent({
@@ -21,20 +27,34 @@ const NumberButton = defineComponent({
     size: {
       type: Number,
       required: true
+    },
+    count: {
+      type: Number,
+      required: true
     }
   },
-  setup(props: Props) {
+  setup(props: Props, { emit }) {
     props.figure;
     props.size;
+    props.count;
 
-    const state = reactive({});
+    const state = reactive({
+      pushed: false
+    });
     const styles = computed(() => {
       return {
         '--size': props.size
       };
     });
 
-    return { state, styles };
+    const tap = () => {
+      if (props.count === props.figure) {
+        state.pushed = true;
+        emit('countup', props.count);
+      }
+    };
+
+    return { state, styles, tap };
   }
 });
 
@@ -49,7 +69,11 @@ export default NumberButton;
   align-items: center;
   justify-content: center;
   font-size: 50px;
-  background: rgb(255, 153, 0);
+  background: linear-gradient(
+    0deg,
+    rgb(218, 133, 7) 0%,
+    rgb(252, 199, 25) 100%
+  );
   width: calc(500px / var(--size));
   height: calc(500px / var(--size));
   border: 1px solid rgb(253, 209, 179);
@@ -58,5 +82,9 @@ export default NumberButton;
 
 .number-button:hover {
   cursor: pointer;
+}
+
+.number-button.pushed {
+  background: linear-gradient(0deg, rgb(48, 33, 11) 0%, rgb(87, 70, 17) 100%);
 }
 </style>
