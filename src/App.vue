@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <h1>Touch The Numbers Vue</h1>
+    <Timer />
     <p>
       select size:
       <span>
@@ -21,10 +22,12 @@
 <script lang="ts">
 import { defineComponent, reactive } from '@vue/composition-api';
 import GameField from '@/components/GameField.vue';
+import Timer from '@/components/Timer.vue';
 
 const App = defineComponent({
   components: {
-    GameField
+    GameField,
+    Timer
   },
   setup() {
     const state = reactive({
